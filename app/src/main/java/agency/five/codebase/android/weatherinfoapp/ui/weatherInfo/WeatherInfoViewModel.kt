@@ -45,7 +45,7 @@ class WeatherInfoViewModel(
             .addOnSuccessListener { location: Location? ->
                 lat = location!!.latitude
                 lon = location.longitude
-            }*/ temp
+            }  temp, will remove*/
         return Pair(lon, lat)
     }
 }
