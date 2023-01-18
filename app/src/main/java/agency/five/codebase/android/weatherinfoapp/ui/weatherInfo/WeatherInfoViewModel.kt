@@ -48,11 +48,11 @@ class WeatherInfoViewModel(
     private fun getLocation() : Pair<Double, Double> {
         var lon = 18.09
         var lat = 45.49
-        fusedLocationClient.lastLocation
+        /*fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
                 lat = location!!.latitude
                 lon = location.longitude
-            }
+            }  temp, will remove*/
         return Pair(lon, lat)
     }
 }
