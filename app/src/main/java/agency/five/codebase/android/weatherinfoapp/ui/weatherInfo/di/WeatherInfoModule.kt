@@ -8,12 +8,12 @@ import org.koin.dsl.module
 
 val weatherInfoModule = module {
     viewModel {
-        (lon : String, lat : String) ->
+        (lon: Double, lat: Double) ->
         WeatherInfoViewModel(
             weatherInfoRepository = get(),
             weatherInfoMapper = get(),
             lon = lon,
-            lat = lat,
+            lat = lat
         )
     }
 

@@ -1,7 +1,6 @@
 package agency.five.codebase.android.weatherinfoapp.ui.search
 
 import agency.five.codebase.android.weatherinfoapp.data.network.WeatherInfoService
-import agency.five.codebase.android.weatherinfoapp.data.repository.WeatherInfoRepository
 import agency.five.codebase.android.weatherinfoapp.ui.search.mapper.SearchMapper
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -37,10 +36,10 @@ class SearchViewModel(
     }
 
     fun onDoneClick() : Pair<Double, Double> {
-        var pair = Pair<Double, Double>(0.0, 0.0)
+        var pair = Pair(0.0, 0.0)
         viewModelScope.launch {
             pair = weatherInfoService.fetchLonLat(searchViewState.value.value).toLonLat()
-            }
+        }
         return pair
         }
 }

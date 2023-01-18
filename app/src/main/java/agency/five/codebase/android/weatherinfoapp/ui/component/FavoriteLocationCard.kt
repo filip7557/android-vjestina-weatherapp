@@ -29,6 +29,7 @@ fun FavoriteLocationCard(
     modifier: Modifier = Modifier,
     onFavoriteClick: () -> Unit,
     onCardClick: () -> Unit,
+    onHomeClick: () -> Unit,
 ) {
     Card(
         shape = AbsoluteRoundedCornerShape(10.dp),
@@ -53,7 +54,7 @@ fun FavoriteLocationCard(
                 model = "https://openweathermap.org/img/wn/${favoriteLocationCardViewState.favoriteLocation.iconId}@2x.png",
                 contentDescription = null,
                 modifier = Modifier
-                    .padding(start = 145.dp),
+                    .padding(start = 130.dp),
                 contentScale = ContentScale.Crop
             )
             Text(
@@ -68,6 +69,14 @@ fun FavoriteLocationCard(
                     .padding(start = 5.dp)
                     .fillMaxWidth(1f)
                     .clickable { onFavoriteClick() }
+            )
+            Icon(
+                painterResource(id = if(favoriteLocationCardViewState.favoriteLocation.isHome) R.drawable.ic_home_selected else R.drawable.ic_home_notselected),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(start = 5.dp)
+                    .fillMaxWidth(1f)
+                    .clickable{ onHomeClick() }
             )
         }
     }

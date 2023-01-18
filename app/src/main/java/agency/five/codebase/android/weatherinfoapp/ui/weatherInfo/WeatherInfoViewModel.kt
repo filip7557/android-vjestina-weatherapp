@@ -7,6 +7,7 @@ import android.annotation.SuppressLint
 import android.location.Location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -16,14 +17,14 @@ import kotlinx.coroutines.launch
 class WeatherInfoViewModel(
     private val weatherInfoRepository: WeatherInfoRepository,
     weatherInfoMapper: WeatherInfoMapper,
-    val lon: String,
-    val lat: String,
+    val lon: Double,
+    val lat: Double,
 ) : ViewModel() {
 
     val weatherInfoViewState: StateFlow<WeatherInfoViewState> =
         weatherInfoRepository.weatherInfo(
-            if(lon.isNotEmpty()) lon.toDouble() else getLocation().first,
-            if(lat.isNotEmpty()) lon.toDouble() else getLocation().second
+            if(lon == 0.0) getLocation().first else lon,
+            if(lat == 0.0) getLocation().second else lat,
         ).map(weatherInfoMapper::toWeatherInfoViewState)
             .stateIn(
                 viewModelScope,
@@ -32,8 +33,14 @@ class WeatherInfoViewModel(
             )
 
     fun toggleFavorite(location: String) {
-        viewModelScope.launch {
-            weatherInfoRepository.toggleFavorite(location)
+        viewModelScope.launch(Dispatchers.IO) {
+            weatherInfoRepository.toggleFavorite(location, lat, lon)
+        }
+    }
+
+    fun toggleHome(location: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            weatherInfoRepository.addHomeLocation(location, lon, lat)
         }
     }
 

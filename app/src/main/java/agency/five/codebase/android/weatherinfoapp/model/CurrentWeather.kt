@@ -6,4 +6,5 @@ data class CurrentWeather(
     val feelsLikeTemperature: Int,
     val iconId: String,
     val isFavorite: Boolean,
+    val isHome: Boolean
 )

@@ -21,6 +21,9 @@ fun WeatherInfoRoute(
         viewState,
         onFavoriteClick = {
             viewModel.toggleFavorite(it)
+        },
+        onHomeClick = {
+            viewModel.toggleHome(it)
         }
     )
 }
@@ -29,12 +32,13 @@ fun WeatherInfoRoute(
 fun WeatherInfoScreen(
     viewState: WeatherInfoViewState,
     onFavoriteClick: (String) -> Unit,
+    onHomeClick: (String) -> Unit,
 ) {
     Column(
         modifier = Modifier
             .verticalScroll(state = rememberScrollState()),
     ) {
-        CurrentWeatherInfoCard(currentWeatherInfoCardViewState = viewState.currentWeatherInfoCardViewState, onFavoriteClick = { onFavoriteClick(viewState.currentWeatherInfoCardViewState.weather.currentLocation) })
+        CurrentWeatherInfoCard(currentWeatherInfoCardViewState = viewState.currentWeatherInfoCardViewState, onFavoriteClick = { onFavoriteClick(viewState.currentWeatherInfoCardViewState.weather.currentLocation) }, onHomeClick = {onHomeClick(viewState.currentWeatherInfoCardViewState.weather.currentLocation)})
         HourlyWeatherInfoCard(hourlyWeatherInfoCardViewState = viewState.hourlyWeatherInfoCardViewState, Modifier.height(145.dp))
         DailyWeatherInfoCard(dailyWeatherInfoCardViewState = viewState.dailyWeatherInfoCardViewState, Modifier.height(310.dp))
         CurrentWeatherDetailsInfoCard(currentWeatherDetailsInfoCardViewState = viewState.currentWeatherDetailsInfoCardViewState)

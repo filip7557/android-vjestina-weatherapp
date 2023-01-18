@@ -21,6 +21,7 @@ data class WeatherInfoViewState(
                     0,
                     "",
                     false,
+                    false,
                 )
             ),
             CurrentWeatherDetailsInfoCardViewState(

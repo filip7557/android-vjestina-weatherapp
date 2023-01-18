@@ -29,6 +29,12 @@ class WeatherInfoServiceImpl(private val client: HttpClient) : WeatherInfoServic
         )
     }
 
-    override suspend fun fetchLonLat(location: String): ApiLonLat =
-        client.get("$BASE_URL_LOCATION?q=location&limit=1&appid=$API_KEY").body()
+    override suspend fun fetchLonLat(location: String): ApiLonLat {
+        val arr = JSONArray(client.get("$BASE_URL_LOCATION?q=$location&limit=1&appid=$API_KEY").body<String>())
+        val obj = arr.getJSONObject(0)
+        return ApiLonLat(
+            lon = obj.getDouble("lon"),
+            lat = obj.getDouble("lat")
+        )
+    }
 }

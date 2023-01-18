@@ -16,7 +16,7 @@ data class WeatherInfoResponse(
     @SerialName("current")
     val current: ApiCurrent,
 ) {
-    fun toWeatherInfo(location: String, isFavorite: Boolean, hourlyWeather: List<ApiHourlyWeather>, dailyWeather: List<ApiDailyWeather>): WeatherInfo {
+    fun toWeatherInfo(location: String, isFavorite: Boolean, isHome: Boolean, hourlyWeather: List<ApiHourlyWeather>, dailyWeather: List<ApiDailyWeather>): WeatherInfo {
         val uv = when (current.uvIndex.toInt()) {
             0 or 1 or 2 -> "Low"
             3 or 4 or 5 -> "Moderate"
@@ -30,7 +30,7 @@ data class WeatherInfoResponse(
         val sunrise = format.format(timeSunrise)
         val sunset = format.format(timeSunset)
         return WeatherInfo(
-            currentWeather = CurrentWeather(current.temperature.toInt(), location, current.feelsLike.toInt(), current.weather[0].iconId, isFavorite),
+            currentWeather = CurrentWeather(current.temperature.toInt(), location, current.feelsLike.toInt(), current.weather[0].iconId, isFavorite, isHome),
             currentWeatherDetails = CurrentWeatherDetails(uv, current.humidity, current.windSpeed.toInt()),
             dailyWeather = dailyWeather.map { it.toDailyWeather() },
             hourlyWeather = hourlyWeather.map { it.toHourlyWeather() },

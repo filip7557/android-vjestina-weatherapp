@@ -6,5 +6,6 @@ data class FavoriteLocation(
     val lat: Float,
     val temperature: Int,
     val iconId: String,
-    val isFavorite: Boolean
+    val isFavorite: Boolean,
+    val isHome: Boolean,
 )

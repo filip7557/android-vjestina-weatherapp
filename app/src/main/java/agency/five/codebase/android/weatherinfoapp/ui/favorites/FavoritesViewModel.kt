@@ -4,6 +4,7 @@ import agency.five.codebase.android.weatherinfoapp.data.repository.WeatherInfoRe
 import agency.five.codebase.android.weatherinfoapp.ui.favorites.mapper.FavoritesMapper
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -24,9 +25,15 @@ class FavoritesViewModel(
                 FavoritesViewState(listOf())
             )
 
-    fun toggleFavorite(location: String) {
-        viewModelScope.launch {
-            weatherInfoRepository.toggleFavorite(location)
+    fun toggleFavorite(location: String, lon: Double, lat: Double,) {
+        viewModelScope.launch(Dispatchers.IO) {
+            weatherInfoRepository.toggleFavorite(location, lat, lon)
+        }
+    }
+
+    fun toggleHome(location: String, lon: Double, lat: Double) {
+        viewModelScope.launch(Dispatchers.IO) {
+            weatherInfoRepository.addHomeLocation(location, lon, lat)
         }
     }
 }

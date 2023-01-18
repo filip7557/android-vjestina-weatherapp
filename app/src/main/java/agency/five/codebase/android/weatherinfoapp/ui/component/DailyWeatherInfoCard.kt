@@ -61,7 +61,7 @@ fun DailyWeatherInfoCard(
                             contentDescription = null,
                         )
                         Text(
-                            text = "${weather.humidity}%",
+                            text = "${weather.humidity}%${if(weather.humidity == 100) "" else "  "}",
                             fontSize = 14.sp,
                             modifier = Modifier
                                 .padding(end = 10.dp)

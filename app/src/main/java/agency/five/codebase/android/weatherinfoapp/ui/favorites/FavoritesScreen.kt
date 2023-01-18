@@ -23,18 +23,22 @@ fun FavoritesRoute(
 
     FavoritesScreen(
         viewState,
-        onFavoriteClick = {
-            viewModel.toggleFavorite(it)
+        onFavoriteClick = { location, lon, lat ->
+            viewModel.toggleFavorite(location, lon, lat)
         },
         onCardClick,
+        onHomeClick = { location, lon, lat ->
+            viewModel.toggleHome(location, lon, lat)
+        }
     )
 }
 
 @Composable
 fun FavoritesScreen(
     viewState: FavoritesViewState,
-    onFavoriteClick: (String) -> Unit,
+    onFavoriteClick: (String, Double, Double) -> Unit,
     onCardClick: (Float, Float) -> Unit,
+    onHomeClick: (String, Double, Double) -> Unit,
 ) {
     Column {
         Text(
@@ -47,10 +51,17 @@ fun FavoritesScreen(
             items(viewState.favoritesPlaces.size) { index ->
                 FavoriteLocationCard(
                     favoriteLocationCardViewState = viewState.favoritesPlaces[index],
-                    onFavoriteClick = { onFavoriteClick(viewState.favoritesPlaces[index].favoriteLocation.location) },
+                    onFavoriteClick = { onFavoriteClick(viewState.favoritesPlaces[index].favoriteLocation.location, viewState.favoritesPlaces[index].favoriteLocation.lon.toDouble(), viewState.favoritesPlaces[index].favoriteLocation.lat.toDouble()) },
                     onCardClick = { onCardClick(
                         viewState.favoritesPlaces[index].favoriteLocation.lon,
                         viewState.favoritesPlaces[index].favoriteLocation.lat )
+                    },
+                    onHomeClick = {
+                        onHomeClick(
+                            viewState.favoritesPlaces[index].favoriteLocation.location,
+                            viewState.favoritesPlaces[index].favoriteLocation.lon.toDouble(),
+                            viewState.favoritesPlaces[index].favoriteLocation.lat.toDouble()
+                        )
                     }
                 )
             }

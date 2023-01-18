@@ -4,9 +4,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "favoriteLocations")
-data class DbFavoriteLocation(
+@Entity(tableName = "homeLocation")
+data class DbHomeLocation(
     @PrimaryKey val location: String,
-    @ColumnInfo(name = "lon") val lon: Float,
-    @ColumnInfo(name = "lat") val lat: Float
+    @ColumnInfo(name = "lon") val lon: Double,
+    @ColumnInfo(name = "lat") val lat: Double
 )

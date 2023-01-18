@@ -1,6 +1,7 @@
 package agency.five.codebase.android.weatherinfoapp.data.repository
 
 import agency.five.codebase.android.weatherinfoapp.data.database.DbFavoriteLocation
+import agency.five.codebase.android.weatherinfoapp.data.database.DbHomeLocation
 import agency.five.codebase.android.weatherinfoapp.data.database.FavoriteLocationDao
 import agency.five.codebase.android.weatherinfoapp.data.network.WeatherInfoService
 import agency.five.codebase.android.weatherinfoapp.model.FavoriteLocation
@@ -22,11 +23,14 @@ class WeatherInfoRepositoryImpl(
         weatherInfoDao.favorites()
             .map { favoriteLocations ->
                 val location = weatherInfoService.fetchLocation(weatherInfoResponse.lon.toFloat(), weatherInfoResponse.lat.toFloat())
+                val hourly = weatherInfoService.fetchHourlyInfo(lon, lat).hourly
+                val daily = weatherInfoService.fetchDailyInfo(lon, lat).daily
                 weatherInfoResponse.toWeatherInfo(
-                    location.location,
-                    favoriteLocations.any { it.location == location.location },
-                    weatherInfoService.fetchHourlyInfo(lon, lat).hourly,
-                    weatherInfoService.fetchDailyInfo(lon, lat).daily
+                    location = location.location,
+                    isFavorite = favoriteLocations.any { it.location == location.location },
+                    isHome = homePlace().any { it.location == location.location },
+                    hourlyWeather = hourly,
+                    dailyWeather = daily
                 )
             }
     }.flowOn(ioDispatcher)
@@ -40,22 +44,51 @@ class WeatherInfoRepositoryImpl(
                     lat = dbFavoriteLocation.lat,
                     temperature = 0,
                     iconId = "",
-                    isFavorite = true
+                    isFavorite = true,
+                    isHome = false,
                 )
             }
         }.shareIn(
             scope = CoroutineScope(ioDispatcher),
-            started = SharingStarted.Eagerly,
+            started = SharingStarted.WhileSubscribed(1000L),
             replay = 1
         )
 
-    override suspend fun addLocationToFavorites(location: String) {
-        val lonLat = weatherInfoService.fetchLonLat(location)
+    override fun homePlace(): List<FavoriteLocation> {
+        var list = listOf(FavoriteLocation("", 0.0f, 0.0f, 0, "", true, isHome = true))
+        weatherInfoDao.home().map {
+                list = it.map { dbHomeLocation ->
+                    FavoriteLocation(
+                        location = dbHomeLocation.location,
+                        lon = dbHomeLocation.lon.toFloat(),
+                        lat = dbHomeLocation.lat.toFloat(),
+                        temperature = 0,
+                        iconId = "",
+                        isFavorite = true,
+                        isHome = true,
+                    )
+                }
+            }
+        return list
+    }
+
+    override suspend fun addHomeLocation(location: String, lon: Double, lat: Double) {
+        weatherInfoDao.deleteHome()
+        weatherInfoDao.insertHomeLocation(
+            DbHomeLocation(
+                location = location,
+                lon = lon,
+                lat = lat,
+            )
+        )
+    }
+
+    override suspend fun addLocationToFavorites(location: String, lat: Double, lon: Double) {
         weatherInfoDao.insertLocation(
             DbFavoriteLocation(
                 location = location,
-                lon = lonLat.lon.toFloat(),
-                lat = lonLat.lat.toFloat()
+                lon = lon.toFloat(),
+                lat = lat.toFloat()
             )
         )
     }
@@ -64,14 +97,14 @@ class WeatherInfoRepositoryImpl(
         weatherInfoDao.delete(location)
     }
 
-    override suspend fun toggleFavorite(location: String) {
+    override suspend fun toggleFavorite(location: String, lat: Double, lon: Double) {
         weatherInfoDao.favorites()
             .map {
                 it.forEach { favLocation ->
                     if(favLocation.location == location)
                         removeLocationFromFavorites(location)
                     else
-                        addLocationToFavorites(location)
+                        addLocationToFavorites(location, lat, lon)
                 }
             }
     }

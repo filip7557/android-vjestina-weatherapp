@@ -1,16 +1,14 @@
 package agency.five.codebase.android.weatherinfoapp.ui.main
 
 import agency.five.codebase.android.weatherinfoapp.R
-import agency.five.codebase.android.weatherinfoapp.navigation.HOME_ROUTE
-import agency.five.codebase.android.weatherinfoapp.navigation.NavigationItem
-import agency.five.codebase.android.weatherinfoapp.navigation.WEATHER_LOCATION_KEY
-import agency.five.codebase.android.weatherinfoapp.navigation.WeatherInfoDetailsDestination
+import agency.five.codebase.android.weatherinfoapp.navigation.*
 import agency.five.codebase.android.weatherinfoapp.ui.favorites.FavoritesRoute
 import agency.five.codebase.android.weatherinfoapp.ui.favorites.FavoritesViewModel
 import agency.five.codebase.android.weatherinfoapp.ui.search.SearchRoute
 import agency.five.codebase.android.weatherinfoapp.ui.search.SearchViewModel
 import agency.five.codebase.android.weatherinfoapp.ui.weatherInfo.WeatherInfoRoute
 import agency.five.codebase.android.weatherinfoapp.ui.weatherInfo.WeatherInfoViewModel
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -46,7 +44,7 @@ fun MainScreen() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
     val weatherInfoViewModel = getViewModel<WeatherInfoViewModel>(parameters = {
-        parametersOf("", "") })
+        parametersOf(0.0, 0.0) })
     val favoritesViewModel = getViewModel<FavoritesViewModel>()
     val searchViewModel = getViewModel<SearchViewModel>()
 
@@ -97,17 +95,18 @@ fun MainScreen() {
                     SearchRoute(
                         viewModel = searchViewModel,
                         onDoneClick = {
-                            navController.navigate(WeatherInfoDetailsDestination.createNavigation(it.first.toFloat(), it.second.toFloat()))
+                            val cords = searchViewModel.onDoneClick()
+                            Log.d("NAV ROUTE", WeatherInfoDetailsDestination.createNavigation(cords.first.toFloat(), cords.second.toFloat()))
+                            navController.navigate(WeatherInfoDetailsDestination.createNavigation(cords.first.toFloat(), cords.second.toFloat()))
                         }
                     )
                 }
                 composable(
                     route = WeatherInfoDetailsDestination.route,
-                    arguments = listOf(navArgument(WEATHER_LOCATION_KEY) { type = NavType.IntType }),
+                    arguments = listOf(navArgument(WEATHER_LOCATION_KEY_LAT) { type = NavType.FloatType }, navArgument(WEATHER_LOCATION_KEY_LON) { type = NavType.FloatType }),
                 ) {
-                    val args = it.arguments?.getString(WEATHER_LOCATION_KEY)?.split('&')!!
-                    val lon = args[0]
-                    val lat = args[1]
+                    val lon = it.arguments?.getFloat(WEATHER_LOCATION_KEY_LON)?.toDouble()
+                    val lat = it.arguments?.getFloat(WEATHER_LOCATION_KEY_LAT)?.toDouble()
                     val viewModel = getViewModel<WeatherInfoViewModel>(parameters = {
                         parametersOf(lat, lon)
                     })

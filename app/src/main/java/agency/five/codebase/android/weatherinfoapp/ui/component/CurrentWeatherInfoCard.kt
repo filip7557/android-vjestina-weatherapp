@@ -29,6 +29,7 @@ fun CurrentWeatherInfoCard(
     currentWeatherInfoCardViewState: CurrentWeatherInfoCardViewState,
     modifier: Modifier = Modifier,
     onFavoriteClick: () -> Unit,
+    onHomeClick: () -> Unit
 ) {
     Card(
         shape = AbsoluteRoundedCornerShape(10.dp),
@@ -52,7 +53,7 @@ fun CurrentWeatherInfoCard(
                         .padding(vertical = 10.dp)
                 ) {
                     Text(
-                        text = currentWeatherInfoCardViewState.weather.currentLocation,
+                        text = currentWeatherInfoCardViewState.weather.currentLocation.lowercase().replaceFirstChar { it.uppercaseChar() },
                         fontSize = 20.sp,
                     )
                     Icon(
@@ -81,12 +82,21 @@ fun CurrentWeatherInfoCard(
                     .padding(8.dp),
                 contentAlignment = Alignment.BottomEnd
             ) {
-                Icon(
-                    painter = painterResource(if(currentWeatherInfoCardViewState.weather.isFavorite) R.drawable.ic_favorite else R.drawable.ic_favorite_empty),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .clickable ( onClick = onFavoriteClick )
-                )
+                Column {
+                    Icon(
+                        painter = painterResource(if (currentWeatherInfoCardViewState.weather.isFavorite) R.drawable.ic_favorite else R.drawable.ic_favorite_empty),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .clickable(onClick = onFavoriteClick)
+                    )
+                    Icon(
+                        painter = painterResource(if(currentWeatherInfoCardViewState.weather.isHome) R.drawable.ic_home_selected else R.drawable.ic_home_notselected),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .clickable(onClick = onHomeClick)
+                            .padding(3.dp)
+                    )
+                }
             }
         }
     }
@@ -104,10 +114,12 @@ fun CurrentWeatherInfoItemPreview() {
                     currentLocation = "Našice",
                     feelsLikeTemperature = 2,
                     iconId = "10d",
-                    isFavorite = selected
+                    isFavorite = selected,
+                    isHome = true,
                 )
             ),
-            onFavoriteClick = { selected = selected.not()}
+            onFavoriteClick = { selected = selected.not()},
+            onHomeClick = {}
         )
     }
 }
