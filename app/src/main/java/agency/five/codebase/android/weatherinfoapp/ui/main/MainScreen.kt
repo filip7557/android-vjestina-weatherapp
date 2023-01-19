@@ -8,7 +8,6 @@ import agency.five.codebase.android.weatherinfoapp.ui.search.SearchRoute
 import agency.five.codebase.android.weatherinfoapp.ui.search.SearchViewModel
 import agency.five.codebase.android.weatherinfoapp.ui.weatherInfo.WeatherInfoRoute
 import agency.five.codebase.android.weatherinfoapp.ui.weatherInfo.WeatherInfoViewModel
-import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -85,7 +84,6 @@ fun MainScreen() {
                         viewModel = weatherInfoViewModel,
                         onHomeEmpty = {
                             navController.navigate(SearchDestination.createNavigation(true))
-                            Log.e("SEARCHNAV", SearchDestination.createNavigation(true))
                         }
                     )
                 }
@@ -121,7 +119,6 @@ fun MainScreen() {
                     arguments = listOf(navArgument(SEARCH_BOOLEAN_KEY) { type = NavType.BoolType })
                 ) {
                     val isHomeEmpty = it.arguments?.getBoolean(SEARCH_BOOLEAN_KEY)
-                    Log.e("ISHOMEMPTY", "$isHomeEmpty")
                     val viewModel = getViewModel<SearchViewModel>(parameters = {
                         parametersOf(isHomeEmpty)
                     })
