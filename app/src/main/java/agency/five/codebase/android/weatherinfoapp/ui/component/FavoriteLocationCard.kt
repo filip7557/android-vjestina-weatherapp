@@ -47,28 +47,20 @@ fun FavoriteLocationCard(
             Text(
                 text = favoriteLocationCardViewState.favoriteLocation.location,
                 modifier = Modifier
-                    .fillMaxWidth(0.25f)
+                    .fillMaxWidth(0.20f)
                     .padding(start = 8.dp)
             )
             AsyncImage(
                 model = "https://openweathermap.org/img/wn/${favoriteLocationCardViewState.favoriteLocation.iconId}@2x.png",
                 contentDescription = null,
                 modifier = Modifier
-                    .padding(start = 130.dp),
+                    .padding(start = 160.dp),
                 contentScale = ContentScale.Crop
             )
             Text(
                 text = "${favoriteLocationCardViewState.favoriteLocation.temperature}°C",
                 modifier = Modifier
-                    .fillMaxWidth(0.5f)
-            )
-            Icon(
-                painterResource(if(favoriteLocationCardViewState.favoriteLocation.isFavorite) R.drawable.ic_favorite else R.drawable.ic_favorite_empty),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(start = 5.dp)
-                    .fillMaxWidth(1f)
-                    .clickable { onFavoriteClick() }
+                    .fillMaxWidth(0.30f)
             )
             Icon(
                 painterResource(id = if(favoriteLocationCardViewState.favoriteLocation.isHome) R.drawable.ic_home_selected else R.drawable.ic_home_notselected),
@@ -77,6 +69,14 @@ fun FavoriteLocationCard(
                     .padding(start = 5.dp)
                     .fillMaxWidth(1f)
                     .clickable{ onHomeClick() }
+            )
+            Icon(
+                painterResource(if(favoriteLocationCardViewState.favoriteLocation.isFavorite) R.drawable.ic_favorite else R.drawable.ic_favorite_empty),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(start = 5.dp)
+                    .fillMaxWidth(1f)
+                    .clickable { onFavoriteClick() }
             )
         }
     }
