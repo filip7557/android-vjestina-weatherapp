@@ -4,6 +4,7 @@ import agency.five.codebase.android.weatherinfoapp.data.network.WeatherInfoServi
 import agency.five.codebase.android.weatherinfoapp.ui.search.mapper.SearchMapper
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -37,9 +38,10 @@ class SearchViewModel(
 
     fun onDoneClick() : Pair<Double, Double> {
         var pair = Pair(0.0, 0.0)
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             pair = weatherInfoService.fetchLonLat(searchViewState.value.value).toLonLat()
         }
+        Thread.sleep(500L)
         return pair
         }
 }

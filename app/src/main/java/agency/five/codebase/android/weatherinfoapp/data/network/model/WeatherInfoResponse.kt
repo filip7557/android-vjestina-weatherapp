@@ -7,12 +7,16 @@ import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.util.*
 
+var globalTimeZoneOffset: Int = 0
+
 @Serializable
 data class WeatherInfoResponse(
     @SerialName("lat")
     val lat: Double,
     @SerialName("lon")
     val lon: Double,
+    @SerialName("timezone_offset")
+    val timeZoneOffset: Int,
     @SerialName("current")
     val current: ApiCurrent,
 ) {
@@ -24,8 +28,9 @@ data class WeatherInfoResponse(
             8 or 9 or 10 -> "Very high"
             else -> "Low"
         }
-        val timeSunrise = Date((current.sunrise)*1000)
-        val timeSunset = Date((current.sunset)*1000)
+        globalTimeZoneOffset = timeZoneOffset-3600
+        val timeSunrise = Date((current.sunrise+ globalTimeZoneOffset)*1000)
+        val timeSunset = Date((current.sunset+ globalTimeZoneOffset)*1000)
         val format = SimpleDateFormat("HH:mm")
         val sunrise = format.format(timeSunrise)
         val sunset = format.format(timeSunset)
@@ -120,7 +125,7 @@ data class ApiHourlyWeather(
     val weather: List<ApiWeather>,
 ) {
     fun toHourlyWeather(): HourlyWeather {
-        val date = Date((time)*1000)
+        val date = Date((time+ globalTimeZoneOffset)*1000)
         val format = SimpleDateFormat("HH:mm")
         return HourlyWeather(
             temperature = temperature.toInt(),

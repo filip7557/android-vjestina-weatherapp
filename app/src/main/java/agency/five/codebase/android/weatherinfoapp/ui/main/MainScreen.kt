@@ -8,7 +8,6 @@ import agency.five.codebase.android.weatherinfoapp.ui.search.SearchRoute
 import agency.five.codebase.android.weatherinfoapp.ui.search.SearchViewModel
 import agency.five.codebase.android.weatherinfoapp.ui.weatherInfo.WeatherInfoRoute
 import agency.five.codebase.android.weatherinfoapp.ui.weatherInfo.WeatherInfoViewModel
-import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -95,9 +94,7 @@ fun MainScreen() {
                     SearchRoute(
                         viewModel = searchViewModel,
                         onDoneClick = {
-                            val cords = searchViewModel.onDoneClick()
-                            Log.d("NAV ROUTE", WeatherInfoDetailsDestination.createNavigation(cords.first.toFloat(), cords.second.toFloat()))
-                            navController.navigate(WeatherInfoDetailsDestination.createNavigation(cords.first.toFloat(), cords.second.toFloat()))
+                            navController.navigate(WeatherInfoDetailsDestination.createNavigation(it.second.toFloat(), it.first.toFloat()))
                         }
                     )
                 }

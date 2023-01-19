@@ -53,7 +53,7 @@ fun CurrentWeatherInfoCard(
                         .padding(vertical = 10.dp)
                 ) {
                     Text(
-                        text = currentWeatherInfoCardViewState.weather.currentLocation.lowercase().replaceFirstChar { it.uppercaseChar() },
+                        text = currentWeatherInfoCardViewState.weather.currentLocation,
                         fontSize = 20.sp,
                     )
                     Icon(
