@@ -6,4 +6,5 @@
     <string name="search">Search</string>
     <string name="sunrise">Sunrise</string>
     <string name="sunset">Sunset</string>
+    <string name="homeEmptyText">You don\'t have a home location set.\nPlease search for one and set it.</string>
 </resources>

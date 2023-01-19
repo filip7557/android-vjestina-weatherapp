@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 class SearchViewModel(
     private val weatherInfoService: WeatherInfoService,
     private val searchMapper: SearchMapper,
+    private val isHomeEmpty: Boolean = false,
 ) : ViewModel() {
 
     private val viewState = MutableStateFlow(SearchViewState(""))
@@ -43,5 +44,7 @@ class SearchViewModel(
         }
         Thread.sleep(500L)
         return pair
-        }
+    }
+
+    fun isHomeEmpty(): Boolean = isHomeEmpty
 }

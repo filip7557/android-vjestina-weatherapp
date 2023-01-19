@@ -1,10 +1,7 @@
 package agency.five.codebase.android.weatherinfoapp.ui.weatherInfo
 
 import agency.five.codebase.android.weatherinfoapp.data.repository.WeatherInfoRepository
-import agency.five.codebase.android.weatherinfoapp.fusedLocationClient
 import agency.five.codebase.android.weatherinfoapp.ui.weatherInfo.mapper.WeatherInfoMapper
-import android.annotation.SuppressLint
-import android.location.Location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -21,10 +18,12 @@ class WeatherInfoViewModel(
     val lat: Double,
 ) : ViewModel() {
 
+    var isHomeEmpty: Boolean = false
+
     val weatherInfoViewState: StateFlow<WeatherInfoViewState> =
         weatherInfoRepository.weatherInfo(
-            if(lon == 0.0) getLocation().first else lon,
-            if(lat == 0.0) getLocation().second else lat,
+            if(lon == 0.0) getHomeLocation().first else lon,
+            if(lat == 0.0) getHomeLocation().second else lat,
         ).map(weatherInfoMapper::toWeatherInfoViewState)
             .stateIn(
                 viewModelScope,
@@ -44,15 +43,17 @@ class WeatherInfoViewModel(
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private fun getLocation() : Pair<Double, Double> {
-        var lon = 18.09
-        var lat = 45.49
-        /*fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                lat = location!!.latitude
-                lon = location.longitude
-            }  temp, will remove*/
-        return Pair(lon, lat)
+    fun onHomeEmpty(): Boolean = isHomeEmpty
+
+    private fun getHomeLocation() : Pair<Double, Double> {
+
+        val home = weatherInfoRepository.homePlace()
+
+        if(home.first().location == "") {
+            isHomeEmpty = true
+            return Pair(0.0, 0.0)
+        }
+
+        return Pair(home.first().lon.toDouble(), home.first().lat.toDouble())
     }
 }

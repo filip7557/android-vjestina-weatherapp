@@ -13,8 +13,13 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun WeatherInfoRoute(
-    viewModel: WeatherInfoViewModel
+    viewModel: WeatherInfoViewModel,
+    onHomeEmpty: () -> Unit,
 ) {
+    if(viewModel.onHomeEmpty()) {
+        onHomeEmpty()
+        return
+    }
     val viewState: WeatherInfoViewState by viewModel.weatherInfoViewState.collectAsState()
 
     WeatherInfoScreen(

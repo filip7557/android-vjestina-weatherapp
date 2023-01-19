@@ -22,13 +22,15 @@ class WeatherInfoRepositoryImpl(
     }.flatMapLatest { weatherInfoResponse ->
         weatherInfoDao.favorites()
             .map { favoriteLocations ->
-                val location = weatherInfoService.fetchLocation(weatherInfoResponse.lon.toFloat(), weatherInfoResponse.lat.toFloat())
+                var location = ""
+                if(lon != 0.0)
+                    location = weatherInfoService.fetchLocation(weatherInfoResponse.lon.toFloat(), weatherInfoResponse.lat.toFloat()).location
                 val hourly = weatherInfoService.fetchHourlyInfo(lon, lat).hourly
                 val daily = weatherInfoService.fetchDailyInfo(lon, lat).daily
                 weatherInfoResponse.toWeatherInfo(
-                    location = location.location,
-                    isFavorite = favoriteLocations.any { it.location == location.location },
-                    isHome = homePlace().any { it.location == location.location },
+                    location = location,
+                    isFavorite = favoriteLocations.any { it.location == location },
+                    isHome = homePlace().any { it.location == location },
                     hourlyWeather = hourly,
                     dailyWeather = daily
                 )

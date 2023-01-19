@@ -8,6 +8,7 @@ import agency.five.codebase.android.weatherinfoapp.ui.search.SearchRoute
 import agency.five.codebase.android.weatherinfoapp.ui.search.SearchViewModel
 import agency.five.codebase.android.weatherinfoapp.ui.weatherInfo.WeatherInfoRoute
 import agency.five.codebase.android.weatherinfoapp.ui.weatherInfo.WeatherInfoViewModel
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -45,7 +46,7 @@ fun MainScreen() {
     val weatherInfoViewModel = getViewModel<WeatherInfoViewModel>(parameters = {
         parametersOf(0.0, 0.0) })
     val favoritesViewModel = getViewModel<FavoritesViewModel>()
-    val searchViewModel = getViewModel<SearchViewModel>()
+    val searchViewModel = getViewModel<SearchViewModel>(parameters = {parametersOf(false)})
 
     Scaffold(
         topBar = {
@@ -80,7 +81,13 @@ fun MainScreen() {
                 modifier = Modifier.padding(padding)
             ) {
                 composable(NavigationItem.HomeDestination.route) {
-                    WeatherInfoRoute(weatherInfoViewModel)
+                    WeatherInfoRoute(
+                        viewModel = weatherInfoViewModel,
+                        onHomeEmpty = {
+                            navController.navigate(SearchDestination.createNavigation(true))
+                            Log.e("SEARCHNAV", SearchDestination.createNavigation(true))
+                        }
+                    )
                 }
                 composable(NavigationItem.FavoritesDestination.route) {
                     FavoritesRoute(
@@ -107,7 +114,22 @@ fun MainScreen() {
                     val viewModel = getViewModel<WeatherInfoViewModel>(parameters = {
                         parametersOf(lat, lon)
                     })
-                    WeatherInfoRoute(viewModel)
+                    WeatherInfoRoute(viewModel = viewModel, onHomeEmpty = {})
+                }
+                composable(
+                    route = SearchDestination.route,
+                    arguments = listOf(navArgument(SEARCH_BOOLEAN_KEY) { type = NavType.BoolType })
+                ) {
+                    val isHomeEmpty = it.arguments?.getBoolean(SEARCH_BOOLEAN_KEY)
+                    Log.e("ISHOMEMPTY", "$isHomeEmpty")
+                    val viewModel = getViewModel<SearchViewModel>(parameters = {
+                        parametersOf(isHomeEmpty)
+                    })
+                    SearchRoute(
+                        viewModel = viewModel,
+                        onDoneClick = { pair ->
+                            navController.navigate(WeatherInfoDetailsDestination.createNavigation(pair.second.toFloat(), pair.first.toFloat()))
+                        })
                 }
             }
         }

@@ -8,9 +8,11 @@ import org.koin.dsl.module
 
 val searchModule = module {
     viewModel {
+        (isHomeEmpty: Boolean) ->
         SearchViewModel(
             weatherInfoService = get(),
             searchMapper = get(),
+            isHomeEmpty = isHomeEmpty
         )
     }
 

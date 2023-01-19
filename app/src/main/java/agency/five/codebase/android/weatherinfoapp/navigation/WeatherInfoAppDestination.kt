@@ -8,7 +8,9 @@ const val SEARCH_ROUTE = "Search"
 const val WEATHER_INFO_DETAILS_ROUTE = "WeatherInfoDetails"
 const val WEATHER_LOCATION_KEY_LAT = "lat"
 const val WEATHER_LOCATION_KEY_LON = "lon"
+const val SEARCH_BOOLEAN_KEY = "boolean"
 const val WEATHER_INFO_DETAILS_ROUTE_WITH_PARAMS = "$WEATHER_INFO_DETAILS_ROUTE/{$WEATHER_LOCATION_KEY_LAT}&{$WEATHER_LOCATION_KEY_LON}"
+const val SEARCH_ROUTE_WITH_PARAMS = "$SEARCH_ROUTE/{$SEARCH_BOOLEAN_KEY}"
 
 sealed class WeatherInfoAppDestination(
     open val route: String,
@@ -45,4 +47,8 @@ sealed class NavigationItem(
 
 object WeatherInfoDetailsDestination : WeatherInfoAppDestination(WEATHER_INFO_DETAILS_ROUTE_WITH_PARAMS) {
     fun createNavigation(lon: Float, lat: Float): String = "$WEATHER_INFO_DETAILS_ROUTE/${lat}&${lon}"
+}
+
+object SearchDestination : WeatherInfoAppDestination(SEARCH_ROUTE_WITH_PARAMS) {
+    fun createNavigation(isHomeEmpty: Boolean): String = "$SEARCH_ROUTE/${isHomeEmpty}"
 }
