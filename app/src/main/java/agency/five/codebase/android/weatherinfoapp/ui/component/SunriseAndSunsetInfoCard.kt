@@ -72,7 +72,7 @@ fun SunriseAndSunsetInfoCard(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = stringResource(id = R.string.sunrise),
+                    text = stringResource(id = R.string.sunset),
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(5.dp)
