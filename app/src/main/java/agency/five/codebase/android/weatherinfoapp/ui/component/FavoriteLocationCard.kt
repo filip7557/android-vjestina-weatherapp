@@ -48,7 +48,7 @@ fun FavoriteLocationCard(
                 text = favoriteLocationCardViewState.favoriteLocation.location,
                 modifier = Modifier
                     .fillMaxWidth(0.20f)
-                    .padding(start = 8.dp)
+                    .padding(start = 8.dp, top = 8.dp, bottom = 8.dp)
             )
             AsyncImage(
                 model = "https://openweathermap.org/img/wn/${favoriteLocationCardViewState.favoriteLocation.iconId}@2x.png",
