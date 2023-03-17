@@ -12,15 +12,6 @@ interface FavoriteLocationDao {
     @Query("SELECT * FROM favoriteLocations")
     fun favorites(): Flow<List<DbFavoriteLocation>>
 
-    @Query("SELECT * FROM homeLocation")
-    fun home(): Flow<List<DbHomeLocation>>
-
-    @Query("DELETE FROM homeLocation")
-    suspend fun deleteHome()
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertHomeLocation(location: DbHomeLocation)
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLocation(location: DbFavoriteLocation)
 
