@@ -17,5 +17,7 @@ val databaseModule = module {
         ).build()
     }
     fun provideFavoriteLocationDao(database: WeatherInfoAppDatabase) = database.favoriteLocationDao()
+    fun provideHomeLocationDao(database: WeatherInfoAppDatabase) = database.homeLocationDao()
     single { provideFavoriteLocationDao(get()) }
+    single { provideHomeLocationDao(get()) }
 }

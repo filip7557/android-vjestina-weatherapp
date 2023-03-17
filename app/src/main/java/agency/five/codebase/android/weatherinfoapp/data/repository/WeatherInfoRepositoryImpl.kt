@@ -3,9 +3,11 @@ package agency.five.codebase.android.weatherinfoapp.data.repository
 import agency.five.codebase.android.weatherinfoapp.data.database.DbFavoriteLocation
 import agency.five.codebase.android.weatherinfoapp.data.database.DbHomeLocation
 import agency.five.codebase.android.weatherinfoapp.data.database.FavoriteLocationDao
+import agency.five.codebase.android.weatherinfoapp.data.database.HomeLocationDao
 import agency.five.codebase.android.weatherinfoapp.data.network.WeatherInfoService
 import agency.five.codebase.android.weatherinfoapp.model.FavoriteLocation
 import agency.five.codebase.android.weatherinfoapp.model.WeatherInfo
+import android.util.Log
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -13,14 +15,15 @@ import kotlinx.coroutines.flow.*
 
 class WeatherInfoRepositoryImpl(
     private val weatherInfoService: WeatherInfoService,
-    private val weatherInfoDao: FavoriteLocationDao,
+    private val favoriteLocationDao: FavoriteLocationDao,
+    private val homeLocationDao: HomeLocationDao,
     private val ioDispatcher: CoroutineDispatcher,
 ) : WeatherInfoRepository {
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun weatherInfo(lon: Double, lat: Double): Flow<WeatherInfo> = flow {
         emit(weatherInfoService.fetchWeatherInfo(lon, lat))
     }.flatMapLatest { weatherInfoResponse ->
-        weatherInfoDao.favorites()
+        favoriteLocationDao.favorites()
             .map { favoriteLocations ->
                 var location = ""
                 if(lon != 0.0)
@@ -38,7 +41,7 @@ class WeatherInfoRepositoryImpl(
     }.flowOn(ioDispatcher)
 
     override fun favoritePlaces(): Flow<List<FavoriteLocation>> =
-        weatherInfoDao.favorites().map {
+        favoriteLocationDao.favorites().map {
             it.map { dbFavoriteLocation ->
                 FavoriteLocation(
                     location = dbFavoriteLocation.location,
@@ -58,7 +61,7 @@ class WeatherInfoRepositoryImpl(
 
     override fun homePlace(): List<FavoriteLocation> {
         var list = listOf(FavoriteLocation("", 0.0f, 0.0f, 0, "", true, isHome = true))
-        weatherInfoDao.home().map {
+        homeLocationDao.home().map {
                 list = it.map { dbHomeLocation ->
                     FavoriteLocation(
                         location = dbHomeLocation.location,
@@ -75,8 +78,9 @@ class WeatherInfoRepositoryImpl(
     }
 
     override suspend fun addHomeLocation(location: String, lon: Double, lat: Double) {
-        weatherInfoDao.deleteHome()
-        weatherInfoDao.insertHomeLocation(
+        homeLocationDao.deleteHome()
+        Log.e("CLICK ON ADD HOME", "Location: $location")
+        homeLocationDao.insertHomeLocation(
             DbHomeLocation(
                 location = location,
                 lon = lon,
@@ -86,7 +90,7 @@ class WeatherInfoRepositoryImpl(
     }
 
     override suspend fun addLocationToFavorites(location: String, lat: Double, lon: Double) {
-        weatherInfoDao.insertLocation(
+        favoriteLocationDao.insertLocation(
             DbFavoriteLocation(
                 location = location,
                 lon = lon.toFloat(),
@@ -96,18 +100,16 @@ class WeatherInfoRepositoryImpl(
     }
 
     override suspend fun removeLocationFromFavorites(location: String) {
-        weatherInfoDao.delete(location)
+        favoriteLocationDao.delete(location)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun toggleFavorite(location: String, lat: Double, lon: Double) {
-        weatherInfoDao.favorites()
-            .map {
-                it.forEach { favLocation ->
-                    if(favLocation.location == location)
-                        removeLocationFromFavorites(location)
-                    else
-                        addLocationToFavorites(location, lat, lon)
-                }
-            }
+        favoritePlaces().mapLatest {
+            Log.e("CLICK", "did we get to here!?")
+            if(it.any { favoriteLocation ->  favoriteLocation.location == location })
+                removeLocationFromFavorites(location)
+            else addLocationToFavorites(location, lat, lon)
+        }
     }
 }
