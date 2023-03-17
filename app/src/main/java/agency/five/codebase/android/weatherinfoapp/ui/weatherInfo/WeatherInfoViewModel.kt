@@ -32,7 +32,7 @@ class WeatherInfoViewModel(
             )
 
     fun toggleFavorite(location: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             weatherInfoRepository.toggleFavorite(location, lat, lon)
         }
     }

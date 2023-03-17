@@ -28,8 +28,8 @@ data class CurrentWeatherInfoCardViewState(
 fun CurrentWeatherInfoCard(
     currentWeatherInfoCardViewState: CurrentWeatherInfoCardViewState,
     modifier: Modifier = Modifier,
-    onFavoriteClick: () -> Unit,
-    onHomeClick: () -> Unit
+    onFavoriteClick: (String) -> Unit,
+    onHomeClick: (String) -> Unit
 ) {
     Card(
         shape = AbsoluteRoundedCornerShape(10.dp),
@@ -87,13 +87,13 @@ fun CurrentWeatherInfoCard(
                         painter = painterResource(if (currentWeatherInfoCardViewState.weather.isFavorite) R.drawable.ic_favorite else R.drawable.ic_favorite_empty),
                         contentDescription = null,
                         modifier = Modifier
-                            .clickable(onClick = onFavoriteClick)
+                            .clickable(onClick = { onFavoriteClick(currentWeatherInfoCardViewState.weather.currentLocation) })
                     )
                     Icon(
                         painter = painterResource(if(currentWeatherInfoCardViewState.weather.isHome) R.drawable.ic_home_selected else R.drawable.ic_home_notselected),
                         contentDescription = null,
                         modifier = Modifier
-                            .clickable(onClick = onHomeClick)
+                            .clickable(onClick = { onHomeClick(currentWeatherInfoCardViewState.weather.currentLocation) })
                             .padding(3.dp)
                     )
                 }
