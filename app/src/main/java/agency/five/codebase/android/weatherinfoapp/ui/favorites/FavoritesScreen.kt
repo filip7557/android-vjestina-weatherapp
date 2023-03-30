@@ -1,10 +1,7 @@
 package agency.five.codebase.android.weatherinfoapp.ui.favorites
 
 import agency.five.codebase.android.weatherinfoapp.R
-import agency.five.codebase.android.weatherinfoapp.model.FavoriteLocation
 import agency.five.codebase.android.weatherinfoapp.ui.component.FavoriteLocationCard
-import agency.five.codebase.android.weatherinfoapp.ui.component.FavoriteLocationCardViewState
-import agency.five.codebase.android.weatherinfoapp.ui.theme.WeatherInfoTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,7 +11,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -27,8 +23,8 @@ fun FavoritesRoute(
 
     FavoritesScreen(
         viewState,
-        onFavoriteClick = { location, lon, lat ->
-            viewModel.toggleFavorite(location, lon, lat)
+        onFavoriteClick = { location, lon, lat, iconId ->
+            viewModel.toggleFavorite(location, lon, lat, iconId)
         },
         onCardClick,
         onHomeClick = { location, lon, lat ->
@@ -40,7 +36,7 @@ fun FavoritesRoute(
 @Composable
 fun FavoritesScreen(
     viewState: FavoritesViewState,
-    onFavoriteClick: (String, Double, Double) -> Unit,
+    onFavoriteClick: (String, Double, Double, String) -> Unit,
     onCardClick: (Float, Float) -> Unit,
     onHomeClick: (String, Double, Double) -> Unit,
 ) {
@@ -55,10 +51,10 @@ fun FavoritesScreen(
             items(viewState.favoritesPlaces.size) { index ->
                 FavoriteLocationCard(
                     favoriteLocationCardViewState = viewState.favoritesPlaces[index],
-                    onFavoriteClick = { onFavoriteClick(viewState.favoritesPlaces[index].favoriteLocation.location, viewState.favoritesPlaces[index].favoriteLocation.lon.toDouble(), viewState.favoritesPlaces[index].favoriteLocation.lat.toDouble()) },
+                    onFavoriteClick = { onFavoriteClick(viewState.favoritesPlaces[index].favoriteLocation.location, viewState.favoritesPlaces[index].favoriteLocation.lon.toDouble(), viewState.favoritesPlaces[index].favoriteLocation.lat.toDouble(), viewState.favoritesPlaces[index].favoriteLocation.iconId) },
                     onCardClick = { onCardClick(
-                        viewState.favoritesPlaces[index].favoriteLocation.lon,
-                        viewState.favoritesPlaces[index].favoriteLocation.lat )
+                        viewState.favoritesPlaces[index].favoriteLocation.lat,
+                        viewState.favoritesPlaces[index].favoriteLocation.lon )
                     },
                     onHomeClick = {
                         onHomeClick(
@@ -70,60 +66,5 @@ fun FavoritesScreen(
                 )
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun FavoritesScreenPreview() {
-    WeatherInfoTheme {
-        FavoritesScreen(
-            viewState = FavoritesViewState(
-                listOf(
-                    FavoriteLocationCardViewState(
-                        FavoriteLocation(
-                            "Našice",
-                            45.49f,
-                            18.09f,
-                            4,
-                            "10d",
-                            true,
-                            true,
-                        )
-                    ),
-                    FavoriteLocationCardViewState(
-                        FavoriteLocation(
-                            "Osijek",
-                            45.56f,
-                            18.70f,
-                            6,
-                            "04d",
-                            true,
-                            true,
-                        )
-                    ),
-                    FavoriteLocationCardViewState(
-                        FavoriteLocation(
-                            "Osijek",
-                            45.56f,
-                            18.70f,
-                            6,
-                            "04d",
-                            true,
-                            true,
-                        )
-                    )
-                )
-            ),
-            onCardClick = { lon, lat ->
-
-            },
-            onFavoriteClick = { location, lon, lat ->
-
-            },
-            onHomeClick = { location, lon, lat ->
-
-            }
-        )
     }
 }

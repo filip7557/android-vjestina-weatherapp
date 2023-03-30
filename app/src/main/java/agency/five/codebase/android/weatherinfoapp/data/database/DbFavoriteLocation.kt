@@ -8,5 +8,6 @@ import androidx.room.PrimaryKey
 data class DbFavoriteLocation(
     @PrimaryKey val location: String,
     @ColumnInfo(name = "lon") val lon: Float,
-    @ColumnInfo(name = "lat") val lat: Float
+    @ColumnInfo(name = "lat") val lat: Float,
+    @ColumnInfo(name = "iconId") val iconId: String, //cant save this in db need to pull from api
 )

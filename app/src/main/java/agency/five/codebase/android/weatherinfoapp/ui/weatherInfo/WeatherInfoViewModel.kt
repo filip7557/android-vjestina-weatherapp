@@ -1,14 +1,12 @@
 package agency.five.codebase.android.weatherinfoapp.ui.weatherInfo
 
 import agency.five.codebase.android.weatherinfoapp.data.repository.WeatherInfoRepository
+import agency.five.codebase.android.weatherinfoapp.model.FavoriteLocation
 import agency.five.codebase.android.weatherinfoapp.ui.weatherInfo.mapper.WeatherInfoMapper
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class WeatherInfoViewModel(
@@ -18,12 +16,12 @@ class WeatherInfoViewModel(
     val lat: Double,
 ) : ViewModel() {
 
-    var isHomeEmpty: Boolean = false
+    private var isHomeEmpty: Boolean = false
 
     val weatherInfoViewState: StateFlow<WeatherInfoViewState> =
         weatherInfoRepository.weatherInfo(
-            if(lon == 0.0) getHomeLocation().first else lon,
-            if(lat == 0.0) getHomeLocation().second else lat,
+            if (lon == 0.0) getHomeLocation().first else lon,
+            if (lat == 0.0) getHomeLocation().second else lat,
         ).map(weatherInfoMapper::toWeatherInfoViewState)
             .stateIn(
                 viewModelScope,
@@ -31,9 +29,9 @@ class WeatherInfoViewModel(
                 WeatherInfoViewState.create()
             )
 
-    fun toggleFavorite(location: String) {
+    fun toggleFavorite(location: String, iconId: String) {
         viewModelScope.launch {
-            weatherInfoRepository.toggleFavorite(location, lat, lon)
+            weatherInfoRepository.toggleFavorite(location, lat, lon, iconId)
         }
     }
 
@@ -46,14 +44,17 @@ class WeatherInfoViewModel(
     fun onHomeEmpty(): Boolean = isHomeEmpty
 
     private fun getHomeLocation() : Pair<Double, Double> {
-
-        val home = weatherInfoRepository.homePlace()
-
-        if(home.first().location == "") {
-            isHomeEmpty = true
-            return Pair(0.0, 0.0)
+        var pair = Pair(0.0, 0.0)
+        var place = emptyList<FavoriteLocation>()
+        viewModelScope.launch(Dispatchers.IO) {
+            place = weatherInfoRepository.homePlace().first()
         }
-
-        return Pair(home.first().lon.toDouble(), home.first().lat.toDouble())
+        Thread.sleep(500L)
+        if (place.isEmpty())
+            isHomeEmpty = true
+        else {
+            pair = Pair(place.first().lon.toDouble(), place.first().lat.toDouble())
+        }
+        return pair
     }
 }

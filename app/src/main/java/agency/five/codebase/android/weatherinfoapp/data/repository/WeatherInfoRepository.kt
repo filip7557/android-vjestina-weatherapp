@@ -9,14 +9,14 @@ interface WeatherInfoRepository {
 
     fun favoritePlaces(): Flow<List<FavoriteLocation>>
 
-    fun homePlace(): List<FavoriteLocation>
+    fun homePlace(): Flow<List<FavoriteLocation>>
 
     suspend fun addHomeLocation(location: String, lon: Double, lat: Double)
 
-    suspend fun addLocationToFavorites(location: String, lat: Double, lon: Double)
+    suspend fun addLocationToFavorites(location: String, lat: Double, lon: Double, iconId: String)
 
     suspend fun removeLocationFromFavorites(location: String)
 
-    suspend fun toggleFavorite(location: String, lat: Double, lon: Double)
+    suspend fun toggleFavorite(location: String, lat: Double, lon: Double, iconId: String)
 
 }

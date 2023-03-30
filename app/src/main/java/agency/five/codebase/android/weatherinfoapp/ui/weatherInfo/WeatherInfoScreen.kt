@@ -24,8 +24,8 @@ fun WeatherInfoRoute(
 
     WeatherInfoScreen(
         viewState,
-        onFavoriteClick = {
-            viewModel.toggleFavorite(it)
+        onFavoriteClick = { location, iconId ->
+            viewModel.toggleFavorite(location, iconId)
         },
         onHomeClick = {
             viewModel.toggleHome(it)
@@ -36,7 +36,7 @@ fun WeatherInfoRoute(
 @Composable
 fun WeatherInfoScreen(
     viewState: WeatherInfoViewState,
-    onFavoriteClick: (String) -> Unit,
+    onFavoriteClick: (String, String) -> Unit,
     onHomeClick: (String) -> Unit,
 ) {
     Column(

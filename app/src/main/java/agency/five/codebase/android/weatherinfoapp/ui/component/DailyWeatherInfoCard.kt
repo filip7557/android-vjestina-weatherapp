@@ -35,15 +35,15 @@ fun DailyWeatherInfoCard(
     ) {
         Row {
             Column(
-                verticalArrangement = Arrangement.spacedBy(17.dp),
+                verticalArrangement = Arrangement.spacedBy(13.dp),
                 modifier = Modifier
                     .fillMaxWidth(0.47f)
-                    .padding(8.dp),
+                    .padding(7.dp),
             ) {
                 for(day in dailyWeatherInfoCardViewState.weathers) {
                     Text(
                         text = day.day.name.lowercase().replaceFirstChar { it.uppercaseChar() },
-                        fontSize = 14.sp
+                        fontSize = 15.sp
                     )
                 }
             }
@@ -74,7 +74,7 @@ fun DailyWeatherInfoCard(
                                 .padding(end = 5.dp)
                         )
                         Text(
-                            text = "${weather.highTemperature}°C  ${weather.lowTemperature}°C",
+                            text = "${if(weather.highTemperature > 9 || weather.highTemperature < -9)" " else "   "}${weather.highTemperature}°C${if(weather.lowTemperature < 10 && weather.lowTemperature > -10) "   " else " "}${weather.lowTemperature}°C",
                             fontSize = 14.sp,
                             modifier = Modifier
                                 .padding(end = 8.dp)
