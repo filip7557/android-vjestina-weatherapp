@@ -3,6 +3,7 @@ package agency.five.codebase.android.weatherinfoapp.data.network.model
 import agency.five.codebase.android.weatherinfoapp.model.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.text.DateFormat.*
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.util.*
@@ -28,10 +29,10 @@ data class WeatherInfoResponse(
             8 or 9 or 10 -> "Very high"
             else -> "Low"
         }
-        globalTimeZoneOffset = timeZoneOffset-3600
+        //globalTimeZoneOffset = timeZoneOffset - timeZoneOffset
         val timeSunrise = Date((current.sunrise+ globalTimeZoneOffset)*1000)
         val timeSunset = Date((current.sunset+ globalTimeZoneOffset)*1000)
-        val format = SimpleDateFormat("HH:mm")
+        val format = getTimeInstance()
         val sunrise = format.format(timeSunrise)
         val sunset = format.format(timeSunset)
         return WeatherInfo(
